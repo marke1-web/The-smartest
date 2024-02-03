@@ -1,9 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Домашняя страница</title>
+    <title>Регистрация</title>
     <style>
-        /* Стили для кнопки */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
         .login-button {
             display: inline-block;
             padding: 10px 20px;
@@ -11,62 +33,57 @@
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            border: none;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        /* Стили для контейнера */
-        .container {
-            text-align: center;
-            margin-top: 50px;
+        .login-button:hover {
+            background-color: #45a049;
         }
 
-        /* Стили для описания игры */
-        .game-description {
-            font-size: 18px;
-            margin-bottom: 20px;
-        }
-
-        /* Стили для шапки */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        input[type="text"], input[type="password"], input[type="email"], input[type="date"] {
+            width: 100%;
             padding: 10px;
-            background-color: #B0E0E6; /* Нежно-голубой цвет для верхушки */
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 2px solid #ccc;
+            border-radius: 4px;
         }
 
-        .header-title {
-            font-size: 24px;
-        }
-
-        .header-links {
-            display: flex;
-        }
-
-        .header-links a {
-            margin-left: 10px;
-        }
-
-        body {
-            background-color: #ffffff; /* Белый цвет фона */
-            margin: 0;
-            padding: 0;
+        input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="date"]:focus {
+            border-color: #4CAF50;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-title">
-            <a href="/home/">The Smartest</a>
-        </div>
-        <div class="header-links">
-            <a href="/login/" class="login-button">Войти</a>
-            <a href="/register/" class="login-button">Регестрация</a>
-        </div>
-    </div>
+    <form method="post" action="{% url 'register' %}">
+        <h1>Регистрация</h1>
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Имя пользователя" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" id="password" name="password" placeholder="Пароль" required>
+        <input type="password" id="confirm_password" placeholder="Подтвердите пароль" required>
+        <input type="date" name="dob" placeholder="Дата рождения" required>
+        <button type="submit" class="login-button">Зарегистрироваться</button>
+    </form>
 
-    <div class="container">
-        <h1>The Smartest</h1>
-        <p class="game-description">Добро пожаловать на страницу игры "The Smartest". Здесь вы сможете испытать свои знания и стать самым умным!</p>
-    </div>
+    <script>
+        var password = document.getElementById("password");
+        var confirm_password = document.getElementById("confirm_password");
+
+        function validatePassword() {
+            if (password.value != confirm_password.value) {
+                confirm_password.setCustomValidity("Пароли не совпадают");
+            } else {
+                confirm_password.setCustomValidity('');
+            }
+        }
+
+        password.onchange = validatePassword;
+        confirm_password.onkeyup = validatePassword;
+    </script>
 </body>
 </html>
