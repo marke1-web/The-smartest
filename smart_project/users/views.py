@@ -8,12 +8,21 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
 
 
-class HomeView(LoginRequiredMixin, View):
+class HomeView(View):
     def get(self, request):
         is_authenticated = request.user.is_authenticated
-        return render(
-            request, 'users/home.html', {'is_authenticated': is_authenticated}
-        )
+        if is_authenticated:
+            return render(
+                request,
+                "users/home.html",
+                {"is_authenticated": is_authenticated},
+            )
+        else:
+            return render(
+                request,
+                "users/login.html",
+                {"is_authenticated": is_authenticated},
+            )
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):
