@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <title>Домашняя страница</title>
+</head>
+<body class="fade_in">
+    <div class="header">
+        <div class="header-title">
+            <a href="/home/">The Smartest</a>
+        </div>
+        <div class="header-links">
+            {% if request.user.is_authenticated %}
+                <a href="/logout/" class="login-button">Выход</a>
+                <a href="/profile/" class="login-button">Профиль</a>
+            {% else %}
+                <a href="/login/" class="login-button">Вход</a>
+                <a href="/register/" class="login-button">Регистрация</a>
+            {% endif %}
+            <a href="/quiz/" class="login-button">Игра</a>
+        </div>
+    </div>
+    <div class="container">
+        <h1>The Smartest</h1>
+        <p class="game-description">Добро пожаловать на страницу игры "The Smartest". Здесь вы сможете испытать свои знания и стать самым умным!</p>
+        <div class="content">
+            <h2>Приветствуем на странице игры "The Smartest"!</h2>
+            {% if request.user.is_authenticated %}
+                <p>Добро пожаловать, {{ request.user.username }}!</p>
+            {% else %}
+                <p>Пожалуйста, войдите или зарегистрируйтесь, чтобы начать игру.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="footer">
+        &copy; 2024 The Smartest. Все права защищены.
+    </div>
+    <script>
+        window.addEventListener('load', function() {
+            var container = document.querySelector('.container');
+            var header = document.querySelector('.header');
+            container.style.opacity = 1;
+            header.style.opacity = 1;
+        });
+    </script>
+</body>
+</html>
