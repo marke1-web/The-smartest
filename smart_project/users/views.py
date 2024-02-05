@@ -1,26 +1,30 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import login, authenticate
+from django.shortcuts import render
 from users.forms import UserProfileForm
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+from django.views import View
+from django.views.generic import TemplateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
 
 
-@login_required
-def home_view(request):
-    return render(request, 'home.html')
+class HomeView(LoginRequiredMixin, View):
+    def get(self, request):
+        is_authenticated = request.user.is_authenticated
+        return render(
+            request, 'users/home.html', {'is_authenticated': is_authenticated}
+        )
 
 
-def login_view(request):
-    return render(request, 'login.html')
+class ProfileView(LoginRequiredMixin, TemplateView):
+    template_name = 'profile.html'
 
 
-def register(request):
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-        else:
-            print(form.errors)
-    else:
-        form = UserProfileForm()
-    return render(request, 'register.html', {'form': form})
+class CustomLoginView(LoginView):
+    template_name = 'users/login.html'
+
+
+class SignUp(CreateView):
+    form_class = UserProfileForm
+    template_name = 'users/signup.html'
+    success_url = reverse_lazy('home')
