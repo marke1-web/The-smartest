@@ -1,30 +1,61 @@
-from django.shortcuts import render
-from users.forms import UserProfileForm
-from django.views.generic.edit import CreateView
-from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.views import LoginView
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout
+from .forms import CustomUserCreationForm
+from django.views.decorators.csrf import csrf_protect
+from django.contrib.auth.decorators import login_required
 
 
-class HomeView(LoginRequiredMixin, View):
-    def get(self, request):
-        is_authenticated = request.user.is_authenticated
-        return render(
-            request, 'users/home.html', {'is_authenticated': is_authenticated}
-        )
+@csrf_protect
+@login_required(login_url='login')
+def profile(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    return render(request, 'users/profile.html')
 
 
-class ProfileView(LoginRequiredMixin, TemplateView):
-    template_name = 'profile.html'
+@csrf_protect
+def home_view(request):
+    return render(request, 'users/home.html')  # Render the main page
 
 
-class CustomLoginView(LoginView):
-    template_name = 'users/login.html'
+@csrf_protect
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(
+                request, user
+            )  # Automatically log in the user after registration
+            return redirect('home')  # Redirect to the main page
+        return render(request, 'users/register.html', {'form': form})
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'users/register.html', {'form': form})
 
 
-class SignUp(CreateView):
-    form_class = UserProfileForm
-    template_name = 'users/signup.html'
-    success_url = reverse_lazy('home')
+@csrf_protect
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return redirect('home')  # Redirect to the main page after login
+        else:
+            return render(
+                request,
+                'users/login.html',
+                {'error': 'Неверное имя пользователя или пароль.'},
+            )
+    return render(request, 'users/login.html')
+
+
+@csrf_protect
+def user_logout(request):
+    if request.user.is_authenticated:
+        logout(request)
+    return redirect('home')  # Redirect to the main page after logout

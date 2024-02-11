@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Регистрация</h2>
+  <form method="post">
+    {% csrf_token %}
+    <p>
+      <label for="{{ form.username.id_for_label }}">Имя пользователя:</label>
+      <br>
+      {{ form.username }}
+    </p>
+    <p>
+      <label for="{{ form.email.id_for_label }}">Почта:</label>
+      <br>
+      {{ form.email }}
+    </p>
+    <p>
+      <label for="{{ form.gender.id_for_label }}">Пол:</label>
+      <br>
+      <br>
+      {{ form.gender }}
+    </p>
+    <p>
+      Дата рождения
+      <br>
+      <input type="date" id="{{ form.birth_date.id_for_label }}" name="{{ form.birth_date.html_name }}">
+
+    </p>
+    <p>
+      <label for="{{ form.password1.id_for_label }}">Пароль:</label>
+      <br>
+      {{ form.password1 }}
+    </p>
+    <p>
+      <label for="{{ form.password2.id_for_label }}">Подверждение пароля:</label>
+      <br>
+      {{ form.password2 }}
+    </p>
+    <button class="login-button" type="submit">Подтвердить</button>
+  </form>
+{% endblock %}
