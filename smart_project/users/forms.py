@@ -1,35 +1,23 @@
 from django import forms
-from .models import User
-from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser
 
 
-class UserProfileForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = [
-            'username',
-            'gender',
-            'email',
-            'date_birth',
-        ]
-
-
-class RegistrationForm(forms.Form):
-    username = forms.CharField(label='Имя пользователя', max_length=100)
-    password = forms.CharField(label='Пароль', widget=forms.PasswordInput)
-    password_confirm = forms.CharField(
-        label='Подтверждение пароля', widget=forms.PasswordInput
-    )
+class CustomUserCreationForm(UserCreationForm):
+    birth_date = forms.DateField(required=False)
     gender = forms.ChoiceField(
-        label='Пол', choices=[('M', 'Мужской'), ('F', 'Женский')]
+        choices=CustomUser.GENDER_CHOICES, required=False
     )
-    email = forms.EmailField(label='Email')
-    date_birth = forms.DateField(label='Дата рождения')
+    nickname = forms.CharField(max_length=255, required=False)
 
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get("password")
-        password_confirm = cleaned_data.get("password_confirm")
-
-        if password != password_confirm:
-            raise ValidationError("Пароль и подтверждение пароля не совпадают")
+    class Meta:
+        model = CustomUser
+        fields = (
+            'username',
+            'password1',
+            'password2',
+            'email',
+            'birth_date',
+            'gender',
+            'nickname',
+        )
